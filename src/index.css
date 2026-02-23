@@ -1,0 +1,99 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary-cyan: #00f3ff;
+  --color-primary-dark: #0051ff;
+  /* Deeper blue for contrast */
+  --color-accent-gold: #ffea00;
+  /* Brighter neon gold */
+  --color-accent-pink: #ff00ea;
+  /* Added magenta/pink neon */
+  --color-dark-bg: #050508;
+  /* Even darker for neon to pop */
+  --color-glass-bg: rgba(5, 8, 15, 0.7);
+  --color-glass-border: rgba(0, 243, 255, 0.15);
+  --font-tech: 'Orbitron', sans-serif;
+  --font-body: 'Rajdhani', sans-serif;
+}
+
+@layer base {
+  body {
+    background-color: var(--color-dark-bg);
+    color: #ffffff;
+    font-family: var(--font-body);
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    background-image:
+      radial-gradient(circle at 50% 10%, rgba(0, 243, 255, 0.1) 0%, transparent 50%),
+      radial-gradient(circle at 80% 80%, rgba(255, 0, 234, 0.05) 0%, transparent 40%);
+    background-attachment: fixed;
+    overscroll-behavior-y: none;
+  }
+}
+
+@layer utilities {
+  .glass-panel {
+    background: var(--color-glass-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--color-glass-border);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+  }
+
+  .glass-panel-heavy {
+    background: rgba(5, 8, 15, 0.9);
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
+    border-top: 1px solid var(--color-primary-cyan);
+    box-shadow: 0 -10px 40px rgba(0, 243, 255, 0.1);
+  }
+
+  /* Subtle Neon Text Utilities */
+  .text-neon-cyan {
+    color: #fff;
+    text-shadow:
+      0 0 5px rgba(0, 243, 255, 0.5),
+      0 0 10px rgba(0, 243, 255, 0.8),
+      0 0 20px rgba(0, 243, 255, 0.4);
+  }
+
+  .text-neon-pink {
+    color: #fff;
+    text-shadow:
+      0 0 5px rgba(255, 0, 234, 0.5),
+      0 0 10px rgba(255, 0, 234, 0.8),
+      0 0 20px rgba(255, 0, 234, 0.4);
+  }
+
+  .text-gradient {
+    background: linear-gradient(90deg, #fff, var(--color-primary-cyan));
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  /* Subtle Box Utilities */
+  .box-neon-cyan {
+    border: 1px solid rgba(0, 243, 255, 0.5);
+    box-shadow:
+      0 0 10px rgba(0, 243, 255, 0.15),
+      inset 0 0 5px rgba(0, 243, 255, 0.1);
+  }
+
+  .box-neon-cyan-strong {
+    border: 1px solid var(--color-primary-cyan);
+    box-shadow:
+      0 0 15px rgba(0, 243, 255, 0.3),
+      inset 0 0 10px rgba(0, 243, 255, 0.2);
+  }
+
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}

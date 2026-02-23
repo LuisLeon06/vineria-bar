@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nortechly | Humita Jujeña 3D</title>
+
+    <!-- Import Google Fonts for a tech look -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;500;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Model Viewer Component -->
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
+
+    <style>
+        :root {
+            --primary-cyan: #00f3ff;
+            --primary-dark: #0066ff;
+            --accent-gold: #ffd700;
+            --dark-bg: #030305;
+            --glass-panel: rgba(10, 15, 30, 0.65);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --font-tech: 'Orbitron', sans-serif;
+            --font-body: 'Rajdhani', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--dark-bg);
+            color: #ffffff;
+            font-family: var(--font-body);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            background-image:
+                radial-gradient(circle at 50% 10%, rgba(0, 243, 255, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 80% 80%, rgba(255, 215, 0, 0.03) 0%, transparent 30%);
+        }
+
+        /* --- Header & Branding --- */
+        header {
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 20;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(5px);
+        }
+
+        .brand {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .brand h1 {
+            font-family: var(--font-tech);
+            font-weight: 900;
+            font-size: 1.4rem;
+            margin: 0;
+            letter-spacing: 2px;
+            background: linear-gradient(90deg, #fff, var(--primary-cyan));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(0, 243, 255, 0.3);
+        }
+
+        .brand span {
+            font-size: 0.65rem;
+            color: var(--primary-cyan);
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            opacity: 0.8;
+        }
+
+        .status-badge {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.7rem;
+            background: rgba(0, 243, 255, 0.1);
+            padding: 6px 12px;
+            border-radius: 20px;
+            border: 1px solid rgba(0, 243, 255, 0.2);
+            color: var(--primary-cyan);
+        }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            background-color: var(--primary-cyan);
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--primary-cyan);
+            animation: pulse 2s infinite;
+        }
+
+        /* --- Main 3D Viewer --- */
+        .viewer-container {
+            flex: 1;
+            position: relative;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        model-viewer {
+            width: 100%;
+            height: 100%;
+            --poster-color: transparent;
+            --progress-bar-color: var(--primary-cyan);
+            --progress-mask: transparent;
+        }
+
+        /* --- UI Overlay (Floating Elements) --- */
+        .overlay-ui {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 10;
+        }
+
+        .icon-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: white;
+        }
+
+        .icon-btn:hover {
+            background: var(--primary-cyan);
+            color: var(--dark-bg);
+            box-shadow: 0 0 15px var(--primary-cyan);
+        }
+
+        /* --- Bottom Info Panel --- */
+        .info-panel {
+            background: var(--glass-panel);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border-top: 1px solid var(--glass-border);
+            border-radius: 40px 40px 0 0;
+            padding: 30px;
+            position: relative;
+            z-index: 30;
+            box-shadow: 0 -20px 50px rgba(0, 0, 0, 0.5);
+            transform: translateY(0);
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        /* Decorative line above panel */
+        .info-panel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+        }
+
+        .product-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 15px;
+        }
+
+        .product-title h2 {
+            font-family: var(--font-tech);
+            font-size: 1.8rem;
+            margin: 0;
+            line-height: 1.1;
+            text-transform: uppercase;
+        }
+
+        .product-title span {
+            color: var(--accent-gold);
+            font-size: 0.9rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            display: block;
+            margin-top: 5px;
+        }
+
+        .price-tag {
+            text-align: right;
+        }
+
+        .price-amount {
+            font-family: var(--font-tech);
+            font-size: 1.8rem;
+            color: white;
+            font-weight: 700;
+            display: block;
+            margin-top: 0;
+        }
+
+        .price-label {
+            font-size: 0.7rem;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Tags */
+        .tags-container {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .tag {
+            font-size: 0.75rem;
+            padding: 4px 10px;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            color: #ccc;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .tag.highlight {
+            border-color: var(--primary-cyan);
+            color: var(--primary-cyan);
+            background: rgba(0, 243, 255, 0.05);
+        }
+
+        /* Description */
+        .description {
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: #aaa;
+            margin-bottom: 25px;
+            max-width: 600px;
+        }
+
+        /* CTA Button */
+        .cta-container {
+            position: relative;
+        }
+
+        .btn-ar {
+            width: 100%;
+            background: linear-gradient(90deg, var(--primary-cyan), var(--primary-dark));
+            border: none;
+            padding: 20px;
+            border-radius: 12px;
+            color: white;
+            font-family: var(--font-tech);
+            font-weight: 700;
+            font-size: 1rem;
+            letter-spacing: 1px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            box-shadow: 0 10px 30px rgba(0, 243, 255, 0.2);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            text-decoration: none;
+        }
+
+        .btn-ar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: 0.5s;
+        }
+
+        .btn-ar:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(0, 243, 255, 0.3);
+        }
+
+        .btn-ar:hover::after {
+            left: 100%;
+        }
+
+        .btn-ar:active {
+            transform: scale(0.98);
+        }
+
+        /* Animations */
+        @keyframes pulse {
+            0% {
+                opacity: 0.5;
+            }
+
+            50% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0.5;
+            }
+        }
+
+        /* Mobile Adjustments */
+        @media (max-width: 600px) {
+            .product-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .price-tag {
+                text-align: left;
+            }
+
+            .info-panel {
+                padding: 20px;
+                border-radius: 25px 25px 0 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <div class="brand">
+            <h1>NORTECHLY</h1>
+            <span>Gastronomía 4.0</span>
+        </div>
+        <div class="status-badge">
+            <div class="status-dot"></div>
+            DISPONIBLE
+        </div>
+    </header>
+
+    <div class="viewer-container">
+        <!-- Reverting to Corn model as it is closer to Humita than Avocado -->
+        <model-viewer
+            src="https://modelviewer.dev/shared-assets/models/glTF-Sample-Models/2.0/Corn/glTF-Binary/Corn.glb"
+            poster="https://image.qwenlm.ai/public_source/e5e35400-f77e-4a2f-ab7b-afa4cbd229d0/18809c20a-921c-42fd-aa1a-9544df3760a5.png"
+            alt="Humita Jujeña Casera" ar ar-modes="webxr scene-viewer quick-look" camera-controls auto-rotate
+            shadow-intensity="1.5" exposure="1.2" environment-image="neutral" interaction-prompt="auto" loading="eager">
+
+            <!-- Custom Loading Bar -->
+            <div class="progress-bar hide" slot="progress-bar">
+                <div class="update-bar"></div>
+                <div class="loading-text">Cargando Humita 3D...</div>
+            </div>
+
+            <style>
+                .loading-text {
+                    color: var(--primary-cyan);
+                    font-family: var(--font-tech);
+                    font-size: 0.8rem;
+                    margin-top: 10px;
+                    text-align: center;
+                    text-transform: uppercase;
+                    letter-spacing: 2px;
+                    animation: pulse 1s infinite;
+                }
+
+                /* Ensure progress bar is visible */
+                model-viewer::part(default-progress-bar) {
+                    background-color: var(--primary-cyan);
+                    height: 4px;
+                }
+            </style>
+        </model-viewer>
+
+        <div class="overlay-ui">
+            <div class="icon-btn" title="Ver en AR">
+                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+                </svg>
+            </div>
+            <div class="icon-btn" title="Información">
+                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <path d="M12 16v-4M12 8h.01"></path>
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <div class="info-panel">
+        <div class="product-header">
+            <div class="product-title">
+                <h2>Humita Jujeña</h2>
+                <span>EDICIÓN LIMITADA</span>
+            </div>
+            <div class="price-tag">
+                <span class="price-amount">$5.500</span>
+                <span class="price-label">ARS</span>
+            </div>
+        </div>
+
+        <div class="tags-container">
+            <div class="tag highlight">🌽 Maíz Orgánico</div>
+            <div class="tag">🧀 Queso Cremoso</div>
+            <div class="tag">🔥 Ahumado</div>
+        </div>
+
+        <p class="description">
+            Una fusión ancestral entre la tierra del NOA y el futuro.
+            Maíz tierno seleccionado, envuelto en chala natural y cocinado a baja temperatura.
+            <br><span style="color: var(--primary-cyan); font-size: 0.8rem;">* Toca la pantalla para rotar el modelo
+                360°</span>
+        </p>
+
+        <div class="cta-container">
+            <!-- Ensure onclick calls toggleAR without errors -->
+            <button id="arBtn" class="btn-ar">
+                <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+                </svg>
+                PROBAR EN MI MESA (AR)
+            </button>
+        </div>
+    </div>
+
+    <!-- QR Code Modal for Desktop -->
+    <div id="ar-modal" class="modal-overlay">
+        <div class="modal-content">
+            <button class="close-modal" id="closeModalBtn">&times;</button>
+            <h3>Experiencia AR</h3>
+            <p>Escanea este código con tu celular para ver la Humita en tu mesa.</p>
+            <div id="qr-code-container"></div>
+            <p class="modal-note">Asegúrate de estar conectado a internet.</p>
+        </div>
+    </div>
+
+    <style>
+        /* Modal Styles */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-content {
+            background: var(--glass-panel);
+            border: 1px solid var(--glass-border);
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            max-width: 400px;
+            position: relative;
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+            box-shadow: 0 0 50px rgba(0, 243, 255, 0.15);
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: scale(1);
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .close-modal:hover {
+            color: var(--primary-cyan);
+        }
+
+        h3 {
+            font-family: var(--font-tech);
+            color: var(--primary-cyan);
+            margin-top: 0;
+        }
+
+        #qr-code-container img {
+            border-radius: 10px;
+            border: 2px solid var(--primary-cyan);
+            padding: 5px;
+            background: white;
+            margin: 20px 0;
+        }
+
+        .modal-note {
+            font-size: 0.8rem;
+            color: #888;
+        }
+    </style>
+
+    <script>
+        // Use standard event listeners to avoid inline JS issues
+        document.addEventListener('DOMContentLoaded', () => {
+            const modelViewer = document.querySelector("model-viewer");
+            const btn = document.getElementById('arBtn');
+            const closeBtn = document.getElementById('closeModalBtn');
+            const modal = document.getElementById('ar-modal');
+
+            // Model Loaded Log
+            modelViewer.addEventListener("load", () => {
+                console.log("Model loaded successfully");
+            });
+
+            // Parallax Effect
+            document.addEventListener('mousemove', (e) => {
+                const x = (window.innerWidth - e.pageX) / 50;
+                const y = (window.innerHeight - e.pageY) / 50;
+                const header = document.querySelector('header');
+                if (header) header.style.transform = `translate(${x}px, ${y}px)`;
+            });
+
+            // Button Click Listener
+            if (btn) {
+                btn.addEventListener('click', () => {
+                    toggleAR();
+                });
+            }
+
+            // Close Modal Listener
+            if (closeBtn) {
+                closeBtn.addEventListener('click', closeARModal);
+            }
+
+            // Outside Click Listener
+            if (modal) {
+                modal.addEventListener('click', (e) => {
+                    if (e.target.id === 'ar-modal') {
+                        closeARModal();
+                    }
+                });
+            }
+
+            /* --- AR Logic --- */
+            function toggleAR() {
+                console.log("Button clicked!");
+                showToast("Iniciando experiencia AR...");
+
+                const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+                if (isMobile) {
+                    if (modelViewer.canActivateAR) {
+                        modelViewer.activateAR();
+                    } else {
+                        showToast("AR no disponible. Mostrando código QR.");
+                        showARModal();
+                    }
+                } else {
+                    showARModal();
+                }
+            }
+
+            function showARModal() {
+                const qrContainer = document.getElementById('qr-code-container');
+                const currentUrl = window.location.href;
+                const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(currentUrl)}`;
+
+                if (qrContainer) {
+                    qrContainer.innerHTML = `<img src="${qrUrl}" alt="Scan for AR" width="200" height="200">`;
+                }
+                if (modal) {
+                    modal.classList.add('active');
+                }
+            }
+
+            function closeARModal() {
+                if (modal) {
+                    modal.classList.remove('active');
+                }
+            }
+
+            /* --- Toast Notification System --- */
+            function showToast(message) {
+                let toast = document.getElementById('ar-toast');
+                if (!toast) {
+                    toast = document.createElement('div');
+                    toast.id = 'ar-toast';
+                    document.body.appendChild(toast);
+
+                    toast.style.position = 'fixed';
+                    toast.style.bottom = '100px';
+                    toast.style.left = '50%';
+                    toast.style.transform = 'translateX(-50%)';
+                    toast.style.background = 'rgba(0, 243, 255, 0.9)';
+                    toast.style.color = '#000';
+                    toast.style.padding = '12px 24px';
+                    toast.style.borderRadius = '30px';
+                    toast.style.fontFamily = 'Orbitron', sans - serif;
+                    toast.style.fontWeight = 'bold';
+                    toast.style.zIndex = '2000';
+                    toast.style.boxShadow = '0 0 20px rgba(0, 243, 255, 0.5)';
+                    toast.style.transition = 'opacity 0.3s ease';
+                    toast.style.opacity = '0';
+                    toast.style.pointerEvents = 'none';
+                }
+
+                toast.textContent = message;
+                toast.style.opacity = '1';
+
+                setTimeout(() => {
+                    toast.style.opacity = '0';
+                }, 3000);
+            }
+        });
+    </script>
+</body>
+
+</html>
