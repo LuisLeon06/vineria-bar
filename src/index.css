@@ -1,121 +1,166 @@
 @import "tailwindcss";
 
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Inter:wght@300;400;500;600&display=swap');
+
 @theme {
-  /* Fire/Grill Theme for Los Leños */
-  --color-primary-fire: #ff4d00;
-  --color-accent-amber: #ffaa00;
-  --color-fire-red: #cc0000;
+  /* ── Vino / Borgoña / Crema palette ── */
+  --wine-bg: #3A0D1E;
+  /* fondo vino oscuro profundo */
+  --wine-mid: #5C1630;
+  --wine-light: #8B2545;
 
-  /* Redirecting legacy names to fire theme */
-  --color-primary-cyan: var(--color-primary-fire);
-  --color-primary-dark: #802000;
-  --color-accent-gold: var(--color-accent-amber);
-  --color-accent-pink: var(--color-fire-red);
+  --neon-wine: #FF1060;
+  /* neon hot-wine (brillante sobre oscuro) */
+  --neon-purple: #E050D8;
+  /* neon purple/morado */
+  --neon-gold: #F5A020;
+  /* acento dorado cálido */
 
-  --color-dark-bg: #050200;
-  /* Extremely dark reddish black */
-  --color-glass-bg: rgba(15, 5, 0, 0.75);
-  --color-glass-border-fire: rgba(255, 77, 0, 0.3);
-  --color-glass-border: var(--color-glass-border-fire);
+  --cream: #F5E0D8;
+  /* texto crema principal */
+  --cream-mid: #D4A8A0;
+  /* texto crema secundario */
+  --cream-muted: #A07078;
+  /* texto muted */
+
+  --surface: rgba(255, 255, 255, 0.07);
+  --surface-mid: rgba(255, 255, 255, 0.12);
+  --surface-hvy: rgba(60, 14, 32, 0.92);
+  --border: rgba(255, 16, 96, 0.25);
+  --border-glow: rgba(255, 16, 96, 0.55);
+
+  /* Legacy aliases */
+  --color-dark-bg: var(--wine-bg);
+  --color-primary-fire: var(--neon-wine);
+  --color-primary-cyan: var(--neon-wine);
+  --color-accent-amber: var(--neon-gold);
+  --color-accent-pink: var(--neon-purple);
+  --color-glass-bg: var(--surface);
+  --color-glass-border: var(--border);
+
   --font-tech: 'Orbitron', sans-serif;
-  --font-body: 'Rajdhani', sans-serif;
+  --font-body: 'Inter', sans-serif;
 }
 
+/* ── Keyframes ─────────────────────────────────────── */
+@keyframes rotate-neon {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes price-pulse {
+
+  0%,
+  100% {
+    text-shadow: 0 0 6px var(--neon-wine), 0 0 16px rgba(255, 16, 96, 0.60);
+    opacity: 1;
+  }
+
+  50% {
+    text-shadow: 0 0 2px rgba(255, 16, 96, 0.35);
+    opacity: 0.70;
+  }
+}
+
+@keyframes img-flicker {
+
+  0%,
+  100% {
+    filter: brightness(1) drop-shadow(0 0 8px rgba(255, 16, 96, 0.15));
+  }
+
+  50% {
+    filter: brightness(1.06) drop-shadow(0 0 22px rgba(255, 16, 96, 0.45));
+  }
+}
+
+/* ── Base ──────────────────────────────────────────── */
 @layer base {
   body {
-    background-color: var(--color-dark-bg);
-    color: #ffffff;
+    background-color: var(--wine-bg);
+    color: var(--cream);
     font-family: var(--font-body);
     margin: 0;
     padding: 0;
     min-height: 100vh;
     background-image:
-      radial-gradient(circle at 50% 10%, rgba(255, 77, 0, 0.12) 0%, transparent 50%),
-      radial-gradient(circle at 80% 80%, rgba(255, 170, 0, 0.05) 0%, transparent 40%);
+      radial-gradient(ellipse at 15% 10%, rgba(255, 16, 96, 0.14) 0%, transparent 45%),
+      radial-gradient(ellipse at 88% 88%, rgba(224, 80, 216, 0.12) 0%, transparent 42%),
+      radial-gradient(ellipse at 50% 50%, rgba(92, 22, 48, 0.40) 0%, transparent 65%);
     background-attachment: fixed;
     overscroll-behavior-y: none;
   }
 }
 
+/* ── Utilities ─────────────────────────────────────── */
 @layer utilities {
+
   .glass-panel {
-    background: var(--color-glass-bg);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid var(--color-glass-border);
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+    background: var(--surface);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--border);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.08);
   }
 
   .glass-panel-heavy {
-    background: rgba(5, 8, 15, 0.9);
-    backdrop-filter: blur(30px);
-    -webkit-backdrop-filter: blur(30px);
-    border-top: 1px solid var(--color-primary-cyan);
-    box-shadow: 0 -10px 40px rgba(0, 243, 255, 0.1);
+    background: var(--surface-hvy);
+    backdrop-filter: blur(28px);
+    -webkit-backdrop-filter: blur(28px);
+    border-top: 1px solid var(--border-glow);
+    box-shadow: 0 -12px 40px rgba(255, 16, 96, 0.14), 0 -4px 16px rgba(0, 0, 0, 0.30);
   }
 
-  /* Subtle Neon Text Utilities Redirected to Fire */
+  /* ── Neon text ── */
   .text-neon-cyan {
-    color: #fff;
-    text-shadow:
-      0 0 5px rgba(255, 77, 0, 0.7),
-      0 0 10px rgba(255, 77, 0, 0.9),
-      0 0 20px rgba(255, 77, 0, 0.5);
+    color: var(--neon-wine);
+    text-shadow: 0 0 5px var(--neon-wine), 0 0 14px rgba(255, 16, 96, 0.55);
   }
 
   .text-neon-pink {
-    color: #fff;
-    text-shadow:
-      0 0 5px rgba(255, 170, 0, 0.7),
-      0 0 10px rgba(255, 170, 0, 0.9),
-      0 0 20px rgba(255, 170, 0, 0.5);
+    color: var(--neon-purple);
+    text-shadow: 0 0 5px var(--neon-purple), 0 0 16px rgba(224, 80, 216, 0.55);
   }
 
   .text-neon-fire {
-    color: #fff;
-    text-shadow:
-      0 0 5px rgba(255, 77, 0, 0.6),
-      0 0 10px rgba(255, 77, 0, 0.9),
-      0 0 20px rgba(255, 77, 0, 0.5);
+    color: var(--neon-wine);
+    text-shadow: 0 0 6px var(--neon-wine), 0 0 18px rgba(255, 16, 96, 0.50);
   }
 
   .text-neon-amber {
-    color: #fff;
-    text-shadow:
-      0 0 5px rgba(255, 170, 0, 0.6),
-      0 0 10px rgba(255, 170, 0, 0.9),
-      0 0 20px rgba(255, 170, 0, 0.5);
+    color: var(--neon-gold);
+    text-shadow: 0 0 5px var(--neon-gold), 0 0 14px rgba(245, 160, 32, 0.55);
   }
 
   .text-gradient {
-    background: linear-gradient(90deg, #fff, var(--color-primary-cyan));
+    background: linear-gradient(110deg, var(--cream) 0%, var(--neon-wine) 55%, var(--neon-purple) 100%);
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
   }
 
-  /* Subtle Box Utilities Redirected to Fire */
+  /* ── Box glows ── */
   .box-neon-cyan {
-    border: 1px solid rgba(255, 77, 0, 0.6);
-    box-shadow:
-      0 0 15px rgba(255, 77, 0, 0.25),
-      inset 0 0 8px rgba(255, 77, 0, 0.15);
+    border: 1px solid rgba(255, 16, 96, 0.40);
+    box-shadow: 0 0 10px rgba(255, 16, 96, 0.18), inset 0 0 6px rgba(255, 16, 96, 0.07);
   }
 
   .box-neon-cyan-strong {
-    border: 1px solid var(--color-primary-fire);
-    box-shadow:
-      0 0 20px rgba(255, 77, 0, 0.4),
-      inset 0 0 12px rgba(255, 77, 0, 0.25);
+    border: 1px solid var(--neon-wine);
+    box-shadow: 0 0 18px rgba(255, 16, 96, 0.45), inset 0 0 10px rgba(255, 16, 96, 0.12);
   }
 
   .box-neon-fire {
-    border: 1px solid var(--color-primary-fire);
-    box-shadow:
-      0 0 15px rgba(255, 77, 0, 0.4),
-      inset 0 0 10px rgba(255, 77, 0, 0.2);
+    border: 1px solid var(--wine-light);
+    box-shadow: 0 0 14px rgba(255, 16, 96, 0.30), inset 0 0 8px rgba(255, 16, 96, 0.08);
   }
 
+  /* ── Scrollbar ── */
   .hide-scrollbar::-webkit-scrollbar {
     display: none;
   }
@@ -125,13 +170,12 @@
     scrollbar-width: none;
   }
 
-  /* Rotating Neon Border */
+  /* ── Rotating neon border ── */
   .neon-rotating-border {
     position: relative;
     border-radius: 50%;
     overflow: hidden;
-    padding: 6px;
-    /* Space for the border */
+    padding: 5px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -143,10 +187,10 @@
     width: 200%;
     height: 200%;
     background-image: conic-gradient(transparent,
-        rgba(255, 77, 0, 0.2),
-        rgba(255, 77, 0, 0.5) 10%,
-        var(--color-primary-fire) 20%,
-        rgba(255, 170, 0, 0.8) 30%,
+        rgba(255, 16, 96, 0.15),
+        rgba(255, 16, 96, 0.65) 12%,
+        var(--neon-wine) 22%,
+        rgba(224, 80, 216, 0.85) 33%,
         transparent 50%);
     animation: rotate-neon 3s linear infinite;
   }
@@ -154,8 +198,9 @@
   .neon-rotating-border::after {
     content: '';
     position: absolute;
-    inset: 6px;
-    background: var(--color-dark-bg);
+    inset: 5px;
+    background: rgba(50, 10, 26, 0.88);
+    backdrop-filter: blur(4px);
     border-radius: 50%;
     z-index: 1;
   }
@@ -169,21 +214,14 @@
     overflow: hidden;
   }
 
-  @keyframes rotate-neon {
-    from {
-      transform: rotate(0deg);
-    }
-
-    to {
-      transform: rotate(360deg);
-    }
-  }
-
   .fire-glow {
-    box-shadow: 0 0 30px rgba(255, 77, 0, 0.3), inset 0 0 20px rgba(255, 77, 0, 0.2);
+    box-shadow:
+      0 0 26px rgba(255, 16, 96, 0.42),
+      0 0 52px rgba(255, 16, 96, 0.20),
+      inset 0 0 18px rgba(224, 80, 216, 0.12);
   }
 
-  /* Rotating light border for rectangular category cards */
+  /* ── Card rotating border ── */
   .card-rotating-border {
     position: relative;
     border-radius: 2rem;
@@ -196,52 +234,20 @@
     position: absolute;
     inset: -100%;
     background-image: conic-gradient(transparent,
-        rgba(255, 77, 0, 0.2),
-        rgba(255, 77, 0, 0.6) 10%,
-        var(--color-primary-fire) 18%,
-        rgba(255, 170, 0, 0.9) 28%,
-        transparent 45%);
+        rgba(255, 16, 96, 0.15),
+        rgba(255, 16, 96, 0.72) 12%,
+        var(--neon-wine) 20%,
+        rgba(224, 80, 216, 0.88) 30%,
+        transparent 48%);
     animation: rotate-neon 4s linear infinite;
   }
 
-  /* Flicker/pulse animation for product detail image */
-  @keyframes img-flicker {
-
-    0%,
-    100% {
-      filter: brightness(1) drop-shadow(0 0 6px rgba(255, 77, 0, 0.2));
-    }
-
-    50% {
-      filter: brightness(1.12) drop-shadow(0 0 22px rgba(255, 77, 0, 0.7));
-    }
-  }
-
   .img-flicker {
-    animation: img-flicker 2.5s ease-in-out infinite;
-  }
-
-  /* Price pulsing animation */
-  @keyframes price-pulse {
-
-    0%,
-    100% {
-      opacity: 1;
-      text-shadow:
-        0 0 5px rgba(255, 77, 0, 0.7),
-        0 0 10px rgba(255, 77, 0, 0.9),
-        0 0 20px rgba(255, 77, 0, 0.5);
-    }
-
-    50% {
-      opacity: 0.6;
-      text-shadow:
-        0 0 2px rgba(255, 77, 0, 0.3),
-        0 0 5px rgba(255, 77, 0, 0.5);
-    }
+    animation: img-flicker 2.8s ease-in-out infinite;
   }
 
   .price-pulse {
-    animation: price-pulse 1.5s ease-in-out infinite;
+    animation: price-pulse 1.8s ease-in-out infinite;
+    color: var(--neon-wine);
   }
 }
